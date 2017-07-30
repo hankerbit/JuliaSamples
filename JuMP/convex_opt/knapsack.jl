@@ -9,7 +9,7 @@ function main()
     weight = [22, 12, 16, 10, 35, 26, 42, 53]
     capacity = 100
 
-    @variable(model, x[1:length(size)], Bin)
+    @variable(model, x[1:length(size)], bin)
     @objective(model, Max, dot(weight,x))
     @constraint(model, dot(size, x) <= capacity)
 
