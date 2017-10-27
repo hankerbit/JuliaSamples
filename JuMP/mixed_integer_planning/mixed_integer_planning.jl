@@ -1,30 +1,28 @@
 #
+# A path planning code based on mix integer optimization
 #
-#
-# author: Atsushi Sakai
+# author: Atsushi Sakai(@Atsushi_twi)
 #
 
 using PyCall
 using JuMP
 using CPLEX
 
-
-solver = CplexSolver()
-
 @pyimport matplotlib.pyplot as plt
+
+solver = CplexSolver(CPX_PARAM_SCRIND=0)
 
 const A = [1.0 0.0;
         0.0 1.0]
-const B = [1.0 0.0;
+const B = [1.0 1.0;
         0.0 1.0]
 const q = [1.0; 1.0]
 const r = [1.0; 1.0]
 
 const u_max = 0.1
+const T = 10
 
-function control(is, iu)
-
-    T = 100
+function control(is, gs)
 
     model = Model(solver=solver)
     @variable(model, w[1:2,t=1:T])
@@ -36,8 +34,8 @@ function control(is, iu)
 
     obj = []
     for i in 1:T
-        @constraint(model, s[:,i] .<= w[:,i])
-        @constraint(model, -s[:,i] .<= w[:,i])
+        @constraint(model, s[:,i] - gs .<= w[:,i])
+        @constraint(model, -s[:,i] + gs .<= w[:,i])
         @constraint(model, u[:,i] .<= v[:,i])
         @constraint(model, -u[:,i] .<= v[:,i])
         push!(obj, q'*w[1:end,i]+r'*v[1:2,i])
@@ -53,32 +51,62 @@ function control(is, iu)
 
     u_vec = getvalue(u)
     s_vec = getvalue(s)
-    # println(u_vec)
-    # println(s_vec)
 
     return s_vec, u_vec
+end
+
+function plot_obstacle(ob)
+    for i in 1:length(ob[:,1])
+        x = [ob[i,1],ob[i,2],ob[i,2],ob[i,1],ob[i,1]]
+        y = [ob[i,3],ob[i,3],ob[i,4],ob[i,4],ob[i,3]]
+        plt.plot(x,y,"-g")
+    end
 end
 
 function main()
     println(PROGRAM_FILE," start!!")
 
-    s = [10.0, 5.0]
-    u = [0.1, 0.2]
+    s = [10.0, 5.0] # init state
+    gs = [5.0, 7.0] # goal state
 
-    for i=1:100
+    ob = [7.0 8.0 3.0 8.0;
+         5.5 6.0 6.0 10.0;] # [xmin xmax ymin ymax]
 
-        s_p, u_p = control(s, u)
+    h_sx = []
+    h_sy = []
 
-        s = A*s+B*u_p[:,1]
+    for i=1:10000
+        s_p, u_p = control(s, gs)
 
-        plt.plot(s_p[1,:],s_p[2,:],"-b")
+        if sqrt((gs[1]-s[1])^2+(gs[2]-s[2])^2) <= 0.1
+            println("Goal!!!")
+            break
+        end
+
+        s = A*s+B*u_p[:,1] # simulation
+
+        push!(h_sx, s[1])
+        push!(h_sy, s[2])
+
+        plt.cla()
+        plt.plot(gs[1],gs[2],"*r")
+        plt.plot(s_p[1,:],s_p[2,:],"xb")
+        plot_obstacle(ob)
+        plt.plot(s_p[1,:],s_p[2,:],"xb")
+        plt.plot(h_sx,h_sy,"-b")
         plt.plot(s[1],s[2],"or")
         plt.axis("equal")
         plt.grid(true)
         plt.pause(0.0001)
     end
 
-
+    plt.cla()
+    plot_obstacle(ob)
+    plt.plot(gs[1],gs[2],"*r")
+    plt.plot(h_sx,h_sy,"-b")
+    plt.axis("equal")
+    plt.grid(true)
+    plt.show()
 
     println(PROGRAM_FILE," Done!!")
 end
