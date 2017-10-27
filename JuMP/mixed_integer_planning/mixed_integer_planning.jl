@@ -20,15 +20,19 @@ const q = [1.0; 1.0]
 const r = [1.0; 1.0]
 
 const u_max = 0.1
-const T = 10
+const T = 50
+const M = 10000.0
 
-function control(is, gs)
+function control(is, gs, ob)
+
+    nob = length(ob[:,1])
 
     model = Model(solver=solver)
     @variable(model, w[1:2,t=1:T])
     @variable(model, v[1:2,t=1:T])
     @variable(model, s[1:2,t=1:T])
     @variable(model, -u_max <= u[1:2,t=1:T] <= u_max)
+    @variable(model, o[1:4*nob,t=1:T], Bin)
 
     @constraint(model, s[:,1] .== is)
 
@@ -39,6 +43,17 @@ function control(is, gs)
         @constraint(model, u[:,i] .<= v[:,i])
         @constraint(model, -u[:,i] .<= v[:,i])
         push!(obj, q'*w[1:end,i]+r'*v[1:2,i])
+
+
+        # obstable avoidanse
+        for io in 1:nob
+            start_ind = 1+(io-1)*4
+            @constraint(model, sum(o[start_ind:start_ind+3, i]) <= 3)
+            @constraint(model, s[1,i] <= ob[io, 1] + M * o[start_ind, i])
+            @constraint(model, -s[1,i] <= -ob[io, 2] + M * o[start_ind+1, i])
+            @constraint(model, s[2,i] <= ob[io, 3] + M * o[start_ind+2, i])
+            @constraint(model, -s[2,i] <= -ob[io, 4] + M * o[start_ind+3, i])
+        end
     end
 
     for i in 1:T-1
@@ -76,7 +91,7 @@ function main()
     h_sy = []
 
     for i=1:10000
-        s_p, u_p = control(s, gs)
+        s_p, u_p = control(s, gs, ob)
 
         if sqrt((gs[1]-s[1])^2+(gs[2]-s[2])^2) <= 0.1
             println("Goal!!!")
@@ -115,4 +130,5 @@ end
 if contains(@__FILE__, PROGRAM_FILE)
     @time main()
 end
+
 
