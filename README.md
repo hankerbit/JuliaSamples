@@ -11,7 +11,7 @@ Sample codes using JuMP
 
 ![JuliaSamples/movie\.gif at master · AtsushiSakai/JuliaSamples](https://github.com/AtsushiSakai/JuliaSamples/blob/master/JuMP/mixed_integer_planning/movie.gif)
 
-A path planning code with mixed integer programming.
+A model predictive control path planning code with mixed integer programming.
 
 It is based on this paper.
 
