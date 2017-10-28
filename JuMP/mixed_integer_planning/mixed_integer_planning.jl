@@ -8,7 +8,11 @@ using PyCall
 using JuMP
 using CPLEX
 
+include("../common/plot_tool.jl")
+
 @pyimport matplotlib.pyplot as plt
+
+plot_tool.record_movie(true)
 
 solver = CplexSolver(CPX_PARAM_SCRIND=0)
 
@@ -113,7 +117,11 @@ function main()
         plt.axis("equal")
         plt.grid(true)
         plt.pause(0.0001)
+
+        plot_tool.save_frame()
     end
+
+    plot_tool.save_movie("movie.gif", 0.1)
 
     plt.cla()
     plot_obstacle(ob)
