@@ -1,5 +1,5 @@
 #
-# Non linear Support Vector Machine with JuMP
+# Non linear support vector machine with JuMP
 #
 # author: Atsushi Sakai
 #
@@ -18,7 +18,6 @@ function kernel(x1, x2)
     y1 = x1^2
     y2 = sqrt(2)*x1*x2
     y3 = x2^2
-
     return [y1,y2,y3]
 end
 
@@ -26,7 +25,7 @@ function fit(x, w, b)
     if (w'*x - b) -1 >= 0
         return true
     else
-        return true
+        return false
     end
 end
 
@@ -60,14 +59,14 @@ end
 function main()
     println(PROGRAM_FILE," start!!")
 
-    d1 = hcat(rand(Normal(-1, 2), 100), rand(Normal(5, 2), 100))
-    d2 = hcat(rand(Normal(1, 2), 100), rand(Normal(2, 2), 100))
-    d = vcat(d1,d2)
+    d1 = hcat(rand(Normal(3, 1), 50), rand(Normal(5, 1), 50))
+    d2 = hcat(rand(Normal(-3, 1), 50), rand(Normal(-5, 1), 50))
+    d3 = hcat(rand(Normal(1, 1), 100), rand(Normal(2, 1), 100))
+    d = vcat(d1,d2,d3)
     c = vcat([1 for i in 1:100], [-1 for i in 1:100])
 
     nd = nothing
     for i in 1:length(d[:,1])
-
         if nd == nothing
             nd = kernel(d[i,1], d[i,2])
         else
@@ -75,27 +74,25 @@ function main()
         end
     end
     nd = nd'
-    println(size(d))
-    println(size(nd))
 
     w, b = nsvm(nd, c)
 
-    seqx = [i for i in minimum(d[:,1]):1.0:maximum(d[:,1])]
-    seqy = [i for i in minimum(d[:,2]):1.0:maximum(d[:,2])]
+    seqx = [i for i in minimum(d[:,1]):0.5:maximum(d[:,1])]
+    seqy = [i for i in minimum(d[:,2]):0.5:maximum(d[:,2])]
 
     for ix in seqx
         for iy in seqy
             if fit(kernel(ix, iy), w, b)
                 plt.plot(ix, iy , "xk")
             else
-                println("-")
+                plt.plot(ix, iy , "ok")
             end
         end
     end
 
-    # plt.plot(seq, -(w[1] * seq - b)/ w[2] , "-k")
     plt.plot(d1[:,1],d1[:,2],"or")
-    plt.plot(d2[:,1],d2[:,2],"ob")
+    plt.plot(d2[:,1],d2[:,2],"or")
+    plt.plot(d3[:,1],d3[:,2],"ob")
     plt.axis("equal")
     plt.grid(true)
     plt.show()
