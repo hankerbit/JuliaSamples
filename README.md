@@ -18,6 +18,14 @@ It is based on this paper.
 - [MIXED INTEGER PROGRAMMING FOR MULTI-VEHICLE PATH PLANNING](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.4.2591&rep=rep1&type=pdf)
 
 
+## support_vector_machine
+
+
+![Samples](https://github.com/AtsushiSakai/JuliaSamples/blob/master/JuMP/support_vector_machine/linear_svm.png)
+
+![Samples](https://github.com/AtsushiSakai/JuliaSamples/blob/master/JuMP/support_vector_machine/nonlinear_svm.png)
+
+
 # parallel
 
 Sample codes for parallel processing.
