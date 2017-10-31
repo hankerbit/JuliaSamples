@@ -20,8 +20,13 @@ It is based on this paper.
 
 ## support_vector_machine
 
+Support Vector Machine(SVM) classification codes using JuMP.
+
+Linear SVM:
 
 ![Samples](https://github.com/AtsushiSakai/JuliaSamples/blob/master/JuMP/support_vector_machine/linear_svm.png)
+
+Non linear SVM:
 
 ![Samples](https://github.com/AtsushiSakai/JuliaSamples/blob/master/JuMP/support_vector_machine/nonlinear_svm.png)
 
