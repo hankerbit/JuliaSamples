@@ -1,5 +1,5 @@
 #
-#
+# Struct sample on Julia
 #
 # author: Atsushi Sakai
 #
