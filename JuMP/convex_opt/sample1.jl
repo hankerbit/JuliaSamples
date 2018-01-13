@@ -1,9 +1,11 @@
 using JuMP
-using Mosek
+# using Mosek
+using Gurobi
 
 function main()
     println("JuMP sample1")
-    model = Model(solver=MosekSolver())
+    # model = Model(solver=MosekSolver())
+    model = Model(solver=GurobiSolver())
     m = 10
     n = 5
     A = rand(m, n)
