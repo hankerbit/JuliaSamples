@@ -18,6 +18,16 @@ It is based on this paper.
 - [MIXED INTEGER PROGRAMMING FOR MULTI-VEHICLE PATH PLANNING](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.4.2591&rep=rep1&type=pdf)
 
 
+## ChebyshevCenter
+
+![1](https://github.com/AtsushiSakai/JuliaSamples/blob/master/JuMP/Chebyshevcenter/Figure_1.png)
+
+This is a optimization to find Chebyshev center.
+
+Ref:
+
+- [Convex Optimization: A Practical Guide \| Mechatronics3D](http://www.mechatronics3d.com/post/2014-convex-optimization/)
+
 ## support_vector_machine
 
 Support Vector Machine(SVM) classification codes using JuMP.
