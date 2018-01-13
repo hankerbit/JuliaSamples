@@ -1,25 +1,17 @@
 #
-#
+# Chebyshev center optimization
 #
 # author: Atsushi Sakai
 #
+# Ref:
+#   http://www.mechatronics3d.com/post/2014-convex-optimization/
 
 using PyPlot
 using JuMP
-using CPLEX
-solver = CplexSolver(CPX_PARAM_SCRIND=0)
+using ECOS
+solver = ECOSSolver()
 
-function main()
-    println(PROGRAM_FILE," start!!")
-
-    a = [-1.0 -1.0;
-        -0.5 1.0;
-       2.0 -1.0]
-    # println(a)
-
-    b = [1 2 4]
-    # println(b)
-
+function find_chebyshev_center(a, b)
     model = Model(solver=solver)
     @variable(model, r >= 0.0)
     @variable(model, xc[1:2])
@@ -31,10 +23,26 @@ function main()
     status = solve(model)
 
     fr = getvalue(r)
-    println(fr)
+    # println(fr)
 
     fx = getvalue(xc)
-    println(fx)
+    # println(fx)
+
+
+    return fx, fr
+
+end
+
+function main()
+    println(PROGRAM_FILE," start!!")
+
+    a = [-1.0 -1.0;
+        -0.5 1.0;
+       2.0 -1.0]
+
+    b = [1 2 4]
+
+    fx, fr = find_chebyshev_center(a, b)
 
     xs = [i for i in -3.0:5.0]
 
