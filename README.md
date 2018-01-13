@@ -20,7 +20,7 @@ It is based on this paper.
 
 ## ChebyshevCenter
 
-![1](https://github.com/AtsushiSakai/JuliaSamples/blob/master/JuMP/Chebyshevcenter/Figure_1.png)
+![1](https://github.com/AtsushiSakai/JuliaSamples/blob/master/JuMP/ChebyshevCenter/Figure_1.png)
 
 This is a optimization to find Chebyshev center.
 
