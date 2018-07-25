@@ -24,45 +24,55 @@ end
 
 
 
-function seasonal_fitting(tx, ty, x)
-
-    degree = 1
+function seasonal_fitting(tx, ty, cycle)
 
     nteaching=length(tx)
-    A = fill(1.0, (nteaching,1))
-    for i in 1:degree
-        At = tx.^i
-        A = hcat(A, At)
+
+    A = []
+
+    ind = 1
+    while ind <= nteaching
+        for j in 1:cycle
+            t = fill(0.0, cycle)
+            t[j] = 1.0
+            Ar = vcat([ind], t)
+            ind += 1
+
+            if length(A) == 0
+                A = Ar'
+            else
+                A = vcat(A, Ar')
+            end
+
+            if ind >= nteaching
+                break
+            end
+        end
     end
 
     # calc parameter vector
     pv = inv(A'*A)*A'*ty
 
-    Ap = construct_polynomial_matrix(x, degree)
-
-    y = Ap*pv 
+    y = A*pv 
     
     return y
 end
 
 
 
-
 function main()
-
     tx, ty = get_sin_training()
 
     plot(tx, ty, "xb")
 
-    x = [i for i in 0:0.1:10]
-    y = seasonal_fitting(tx, ty, x)
+    cycle = 6
+    y = seasonal_fitting(tx, ty, cycle)
 
-    plot(x, y, "-r")
+    plot(tx, y, "-r")
 
     axis("equal")
 
     show()
-
 end
 
 
