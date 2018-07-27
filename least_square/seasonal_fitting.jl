@@ -2,9 +2,9 @@ using PyPlot
 
 function get_sin_training()
 
-    x = [i for i in 0:20]
+    x = [i for i in 0:18]
 
-    y = sin.(x) + x/5
+    y = sin.(x)*5.0 + x/5
 
 
     return x, y
@@ -21,7 +21,6 @@ function construct_polynomial_matrix(tx, degree)
 
     return A
 end
-
 
 
 function seasonal_fitting(tx, ty, cycle)
@@ -63,14 +62,15 @@ end
 function main()
     tx, ty = get_sin_training()
 
-    plot(tx, ty, "xb")
+    plot(tx, ty, "xb", label="data")
 
     cycle = 6
     y = seasonal_fitting(tx, ty, cycle)
 
-    plot(tx, y, "-r")
+    plot(tx, y, "-r", label="fitting")
 
     axis("equal")
+    legend()
 
     show()
 end
