@@ -4,26 +4,13 @@ function get_sin_training()
 
     x = [i for i in 0:20]
 
-    y = sin.(x)*3.0 + x/5
+	y = sin.(x)*1.0 + x/5
 
     for i in 1:length(y)
-        y[i]*=rand()
+		y[i]+=rand()
     end
 
     return x, y
-end
-
-
-function construct_polynomial_matrix(tx, degree)
-    nteaching=length(tx)
-    A = fill(1.0, (nteaching,1))
-    for i in 1:degree
-        At = tx.^i
-        A = hcat(A, At)
-    end
-    #  display(A)
-
-    return A
 end
 
 
@@ -32,29 +19,21 @@ function auto_regressive_fitting(tx, ty, M)
     N = length(tx)
     A = []
     for i in 1:N-M
-        Ad = fill(0.0, N-1)
-        for j in 0:M-1
-            Ad[i+j] = ty[i+j]
-        end
+		Ad = ty[i:i+M-1]
 
-        if length(A) == 0
-            A = Ad'
-        else
-            A = vcat(A, Ad')
-        end
+		if length(A) == 0
+			A = Ad'
+		else
+			A = vcat(A, Ad')
+		end
     end
-    #  display(A)
-    #  println("")
-    #  println(N)
-    #  println(size(A))
-    #  println(length(ty[M+1:end]))
+	# display(A)
+	# println("")
 
     # calc parameter vector
-    #  pv = inv(A'*A)*A'*ty[M+1:end]
-    pv = pinv(A)*ty[M+1:end]
+	pv = inv(A'*A)*A'*ty[M+1:end]
 
     y = A*pv 
-
     
     return y
 end
