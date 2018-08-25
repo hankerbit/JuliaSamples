@@ -47,9 +47,6 @@ function main()
     M = 4
     y = auto_regressive_fitting(tx, ty, M)
 
-    #  println(length(tx))
-    #  println(length(y))
-
     plot(tx[M+1:end], y, "-r")
 
     axis("equal")
