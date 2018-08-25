@@ -4,8 +4,6 @@
 # author: Atsushi Sakai
 #
 
-const __MAIN__ = length(PROGRAM_FILE)!=0 && contains(@__FILE__, PROGRAM_FILE)
-
 using PyPlot
 
 """
@@ -46,7 +44,7 @@ function main()
 
 	M = 70 # number of data point of one class
 	N = 2*M # total number of data
-	n = 4 # polynomial degree 
+	n = 4 # polynomial degree = n-1
 	Npl = 200 # number of polynomial samples
 
 	xleft = rand(M) .- 1
@@ -85,7 +83,5 @@ function main()
 end
 
 
-if __MAIN__
-	main()
-end
+main()
 
