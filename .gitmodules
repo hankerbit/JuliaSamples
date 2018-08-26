@@ -1,0 +1,3 @@
+[submodule "least_square/VMLS.jl"]
+	path = least_square/VMLS.jl
+	url = https://github.com/VMLS-book/VMLS.jl
