@@ -1,11 +1,29 @@
 #
-#
+# Linear quadratic control
 #
 # author: Atsushi Sakai
 #
 
 using PyPlot
 
+"""
+   cls_solve(A, b, C, d)
+
+Returns the solution of the constrained least squares problem with coefficient 
+matrices `A` and `C`, and right-hand side vectors or matrices `b` and `d`.
+"""
+function cls_solve(A,b,C,d)
+    m, n = size(A)
+    p, n = size(C)
+    Q, R = qr([A; C])
+    Q = Matrix(Q)
+    Q1 = Q[1:m,:]
+    Q2 = Q[m+1:m+p,:]
+    Qtil, Rtil = qr(Q2')
+    Qtil = Matrix(Qtil)
+    w = Rtil \ (2*Qtil'*Q1'*b - 2*(Rtil'\d))
+    return R \ (Q1'*b - Q2'*w/2)
+end
 
 function lqc(A, B, C, x_init, x_des, T, rho)
 	n = size(A,1)
@@ -44,22 +62,22 @@ function main()
 	x_init = [0.496; -0.745; 1.394]
 	x_des = zeros(n,1)
 
-	# open loop  u = 0
+	# open loop control  u = 0
 	T = 100
-
 	yol = zeros(T,1)
 	Xol = [ x_init  zeros(n, T-1) ]
 	for k=1:T-1
-          Xol[:,k+1] = A*Xol[:,k];
+    	Xol[:,k+1] = A*Xol[:,k];
     end
 	yol = C*Xol
 
+	# linear quadratic control
 	rho = 0.2
 	x, u, y = lqc(A,B,C,x_init,x_des,T,rho)
 
-	plot(yol')
-	plot(y')
-
+	plot(yol', label="Open loop")
+	plot(vcat(y...), label="Linear quadratic control")
+	legend()
 	show()
 
     println(PROGRAM_FILE," Done!!")
