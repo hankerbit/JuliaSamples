@@ -8,7 +8,6 @@
 #		Cambridge University Press, 2018. P429
 #
 
-# using Test
 using JuMP
 using Ipopt
 using PyPlot
@@ -28,14 +27,19 @@ function solve_nonlinear_vehicle_control(xfinal, N, gamma, L, dt)
 	@constraint(model, x[:,1] .== [0.0; 0.0; 0.0])
 	@constraint(model, x[:,N] .== xfinal)
 
+	initx = zeros(nx, N)
     for k in 1:N-1
+		# vehicle model
 		@NLconstraint(model,  x[1,k+1] == x[1,k] + dt*u[1,k]*cos(x[3,k]))
         @NLconstraint(model,  x[2,k+1] == x[2,k] + dt*u[1,k]*sin(x[3,k]))
 		@NLconstraint(model,  x[3,k+1] == x[3,k] + dt*u[1,k]/L*tan(u[2,k]))
+
+		initx[:,k] = xfinal*k/N
 	end
+	initx[:,N] = xfinal
+	setvalue(x,initx)# warm starting 
 
 	# object function 
-	# obj = sum(u[1, i]^2 for i=1:N)
 	obj = sum(sum(u[:, i].^2 for i=1:N))
 	obj += gamma*sum(sum((u[:, i+1]-u[:, i]).^2 for i=1:N-1))
 
@@ -44,27 +48,34 @@ function solve_nonlinear_vehicle_control(xfinal, N, gamma, L, dt)
     status = solve(model)
 	println(status)
 
-	xopt = getvalue(x)
-    uopt = getvalue(u)
+	x_opt = getvalue(x)
+    u_opt = getvalue(u)
 
-	display(xopt)
-	display(uopt)
-	
+	display(x_opt)
+	# display(u_opt)
+
+	return x_opt, u_opt
 end
+
 
 function main()
     println(PROGRAM_FILE," start!!")
 
-	xfinal = [0.0;1.0;0.0]
-	N = 50
-	gamma = 10.0 
-	L = 0.1
-	dt = 0.1
+	xfinal = [-1.0;1.0;deg2rad(90)]
+	N = 50 # control steps
+	gamma = 10.0 #weight for diff of input
+	L = 0.1 # Wheel base
+	dt = 0.1 # time tick
 
-	solve_nonlinear_vehicle_control(xfinal, N, gamma, L, dt)
+	x, u = solve_nonlinear_vehicle_control(xfinal, N, gamma, L, dt)
+
+	plot(x[1,:], x[2,:], "-r")
+	plot(xfinal[1], xfinal[2], "ob")
+	axis("equal")
+	show()
 
     println(PROGRAM_FILE," Done!!")
 end
 
-@time main()
+# @time main()
 
