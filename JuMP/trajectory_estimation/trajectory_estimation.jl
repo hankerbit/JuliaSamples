@@ -10,7 +10,7 @@ using JuMP
 using Ipopt
 using PyPlot
 
-function estimate_trajectory(h_x, h_z, h_u, dt, lamda)
+function optimize_trajectory(h_x, h_z, h_u, dt, lamda)
 
 	solver=IpoptSolver(print_level=0)
 	model = Model(solver=solver)
@@ -25,7 +25,6 @@ function estimate_trajectory(h_x, h_z, h_u, dt, lamda)
 	# initial constraint 
 	@constraint(model, x[:,1] .== [0.0; 0.0; 0.0])
 
-	obj = 0
 	for k in 1:N-1
 		# vehicle model
 		@NLconstraint(model,  x[1,k+1] == x[1,k] + dt*u[1,k]*cos(x[3,k]))
@@ -125,13 +124,14 @@ function main()
 	h_xTrue, h_x, h_z, h_u = simulate(u, SIMTIME, DT, ZDT, Q, R)
 
 	lamda = 0.1 # weight for observation residual
-	x_opt, u_opt = estimate_trajectory(h_x, h_z, h_u, DT, lamda)
+	x_opt, u_opt = optimize_trajectory(h_x, h_z, h_u, DT, lamda)
 
 	close()
-	plot(h_xTrue[1,:], h_xTrue[2,:], ".b")
-	plot(h_x[1,:], h_x[2,:], ".g")
-	plot(h_z[1,:], h_z[2,:], "xg")
-	plot(x_opt[1,:], x_opt[2,:], "-r")
+	plot(h_xTrue[1,:], h_xTrue[2,:], ".b", label="Ground Truth")
+	plot(h_x[1,:], h_x[2,:], ".g", label="Dead Recknoing")
+	plot(h_z[1,:], h_z[2,:], "xg", label="GPS Observation")
+	plot(x_opt[1,:], x_opt[2,:], "-r", label="Optimized trajectory")
+	legend()
 	axis("equal")
 
     println(PROGRAM_FILE," Done!!")
