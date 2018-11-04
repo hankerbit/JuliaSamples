@@ -66,8 +66,8 @@ end
 
 function add_input_noize(u,Q)
     un=u[:]
-    un[1]=un[1]+randn()*Q[1]
-    un[2]=un[2]+randn()*Q[2]
+	un[1]=un[1]+randn()*Q[1]
+	un[2]=un[2]+randn()*Q[2]
     return un
 end
 
