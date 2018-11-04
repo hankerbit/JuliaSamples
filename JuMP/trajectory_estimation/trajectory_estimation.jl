@@ -40,8 +40,8 @@ function optimize_trajectory(h_x, h_z, h_u, dt, lamda)
 				 + (x[3,k+1] - (x[3,k] + dt*h_u[2,k]))^2 
 				   for k in 1:N-1)
 				 +lamda*sum(
-				 	(x[1,k] - h_z[1,k])^2 
-				 +  (x[2,k] - h_z[2,k])^2 
+					(x[1,k] - h_z[1,k])^2 
+				 +	(x[2,k] - h_z[2,k])^2 
 				 for k in 1:N-1 if h_z[1,k] != 0.0
 				 ))
 	
@@ -59,16 +59,16 @@ end
 
 function predict_motion(x, u, dt)
 	x[1]=x[1]+u[1]*dt*cos(x[3])
-    x[2]=x[2]+u[1]*dt*sin(x[3])
-    x[3]=x[3]+u[2]*dt
+	x[2]=x[2]+u[1]*dt*sin(x[3])
+	x[3]=x[3]+u[2]*dt
 	return x
 end
 
 function add_input_noize(u,Q)
-    un=u[:]
+	un=u[:]
 	un[1]=un[1]+randn()*Q[1]
 	un[2]=un[2]+randn()*Q[2]
-    return un
+	return un
 end
 
 
@@ -80,9 +80,9 @@ function gps_observation(xTrue, time, zdt, R)
 	end
 
 	z[1]=xTrue[1]+randn()*R[1]
-    z[2]=xTrue[2]+randn()*R[1]
+	z[2]=xTrue[2]+randn()*R[1]
 
-    return z
+	return z
 end
 
 
@@ -112,7 +112,7 @@ function simulate(u, SIMTIME, DT, ZDT, Q, R)
 end
 
 function main()
-    println(PROGRAM_FILE," start!!")
+	println(PROGRAM_FILE," start!!")
 
 	SIMTIME = 50.0
 	DT = 0.1 # time tick for control
@@ -134,7 +134,7 @@ function main()
 	legend()
 	axis("equal")
 
-    println(PROGRAM_FILE," Done!!")
+	println(PROGRAM_FILE," Done!!")
 end
 
 @time main()
