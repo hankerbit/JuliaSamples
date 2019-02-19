@@ -82,6 +82,10 @@ function main()
         setvalue(T[k], T_max/2)
     end
 
+    # print(mod)
+    # JuMP.build(mod)
+    # print(internalmodel(mod))
+
     # Solve for the control and state
     status = solve(mod)
 
@@ -120,9 +124,5 @@ function main()
     println(PROGRAM_FILE," Done!!")
 end
 
-
-if contains(@__FILE__, PROGRAM_FILE)
-    @time main()
-end
-
+@time main()
 

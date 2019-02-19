@@ -47,7 +47,9 @@ function save_movie(fname, d_pause)
 end
 
 
-function plot_arrow(x::Float64, y::Float64, yaw::Float64; length=5.0, width=1.0)
+function plot_arrow(x::Float64, y::Float64,
+                    yaw::Float64;
+                    length=5.0, width=1.0)
     plt.arrow(x, y, length * cos(yaw), length * sin(yaw),
               head_length=width, head_width=width)
 end

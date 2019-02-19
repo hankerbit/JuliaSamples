@@ -1,7 +1,7 @@
 using JuMP
 using Clp
 
-m = Model(solver=ClpSolver())
+m = Model(with_optimizer(Clp.Optimizer))
 
 @variable(m, 0<= x1 <=10)
 @variable(m, x2 >=0)
@@ -13,10 +13,10 @@ m = Model(solver=ClpSolver())
 @constraint(m,  x1 + 3*x2 - 7*x3 <= 10)
 
 print(m)
-status = solve(m)
+optimize!(m)
 
 println("Optimal Solutions:")
-println("x1 = ", getvalue(x1))
-println("x2 = ", getvalue(x2))
-println("x3 = ", getvalue(x3))
+println("x1 = ", value(x1))
+println("x2 = ", value(x2))
+println("x3 = ", value(x3))
 
