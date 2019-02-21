@@ -4,15 +4,17 @@ function get_sin_training()
 
     x = [i for i in 0:18]
 
-    y = sin.(x)*5.0 + x/5
+    y = sin.(x) * 5.0 + x / 5
 
 
     return x, y
 end
 
+
+
 function construct_polynomial_matrix(tx, degree)
-    nteaching=length(tx)
-    A = fill(1.0, (nteaching,1))
+    nteaching = length(tx)
+    A = fill(1.0, (nteaching, 1))
     for i in 1:degree
         At = tx.^i
         A = hcat(A, At)
@@ -22,10 +24,18 @@ function construct_polynomial_matrix(tx, degree)
     return A
 end
 
+function plot_arrow(x::Float64, y::Float64,
+                    yaw::Float64;
+                    length = 5.0, width = 1.0)
+    plt.arrow(x, y, length * cos(yaw), length * sin(yaw),
+              head_length = width, head_width = width)
+end
 
-function seasonal_fitting(tx, ty, cycle)
+function seasonal_fitting(tx::Array{Float64},
+                          ty::Array{Float64},
+                          cycle)
 
-    nteaching=length(tx)
+    nteaching = length(tx)
 
     A = []
 
@@ -50,9 +60,9 @@ function seasonal_fitting(tx, ty, cycle)
     end
 
     # calc parameter vector
-    pv = inv(A'*A)*A'*ty
+    pv = inv(A' * A) * A' * ty
 
-    y = A*pv 
+    y = A * pv 
     
     return y
 end
@@ -60,14 +70,14 @@ end
 
 
 function main()
-    tx, ty = get_sin_training()
+tx, ty = get_sin_training()
 
-    plot(tx, ty, "xb", label="data")
+    plot(tx, ty, "xb", label = "data")
 
     cycle = 6
     y = seasonal_fitting(tx, ty, cycle)
 
-    plot(tx, y, "-r", label="fitting")
+    plot(tx, y, "-r", label = "fitting")
 
     axis("equal")
     legend()
