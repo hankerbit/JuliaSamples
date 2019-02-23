@@ -28,7 +28,6 @@ function find_chebyshev_center(a, b)
     fx = getvalue(xc)
     # println(fx)
 
-
     return fx, fr
 
 end
@@ -69,9 +68,5 @@ function main()
     println(PROGRAM_FILE," Done!!")
 end
 
-
-if length(PROGRAM_FILE)!=0 &&
-    contains(@__FILE__, PROGRAM_FILE)
-    @time main()
-end
+@time main()
 
